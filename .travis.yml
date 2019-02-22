@@ -1,0 +1,7 @@
+language: go
+go:
+  - tip
+  - master
+
+env:
+  - GO111MODULE=on
