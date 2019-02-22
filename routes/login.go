@@ -1,6 +1,10 @@
 package routes
 
 import (
+	"log"
+
+	"github.com/2brokeboys/sheepy-server/common"
+	"github.com/2brokeboys/sheepy-server/db"
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
 )
@@ -9,33 +13,43 @@ import (
 func Login(c *gin.Context) {
 	session := sessions.Default(c)
 
-	// check if already logged in
-	v := session.Get("login")
-	b, ok := v.(bool)
-	if b && ok {
-		c.JSON(200, gin.H{
+	// Check if already logged in
+	v := session.Get("user")
+	_, ok := v.(*common.User)
+	if ok {
+		c.JSON(409, gin.H{
 			"error": "already logged in",
 		})
 		return
 	}
 
-	// get inputs
+	// Get inputs
 	var l struct {
 		User     string `json:"user" binding:"required"`
 		Password string `json:"password" binding:"required"`
 	}
-	if c.ShouldBindJSON(&l) != nil {
-		c.JSON(200, gin.H{
-			"error": "inavlid data",
+	err := c.ShouldBindJSON(&l)
+	if err != nil {
+		log.Println(err)
+		c.JSON(400, gin.H{
+			"error": "invalid data",
 		})
 		return
 	}
 
-	// validate credentials
-	
-	// update session
-	session.Set("login", true)
-	session.Set("uid", 23)
+	// Validate credentials
+	user, ok := db.AuthentificateUser(l.User, l.Password)
+	if !ok {
+		c.JSON(401, gin.H{
+			"error": "invalid credentials",
+		})
+		return
+	}
+
+	// Update session
+	session.Set("user", user)
 	session.Save()
-	c.JSON(200, gin.H{"success": true})
+	c.JSON(200, gin.H{
+		"success": true,
+	})
 }

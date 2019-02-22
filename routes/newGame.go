@@ -1,39 +1,28 @@
 package routes
 
-import "github.com/gin-gonic/gin"
+import (
+	"time"
 
-type GameType int
-
-const (
-	SauGras GameType = iota
-	SauSchell
-	SauEichel
-	SoloHerz
-	SoloGras
-	SoloSchell
-	SoloEichel
-	Wenz
-	Ramsch
+	"github.com/2brokeboys/sheepy-server/common"
+	"github.com/2brokeboys/sheepy-server/db"
+	"github.com/gin-gonic/gin"
 )
-
-type Game struct {
-	Participants [4]int `json:"participants" binding:"required"`
-	Player       int    `json:"player" binding:"required"`
-	Playmate     int    `json:"playmate" binding:"required"`
-
-	GameType GameType `json:"game_type" binding:"required"`
-	Points   int      `json:"points" binding:"required"`
-	Schwarz  bool     `json:"schwarz" binding:"required"`
-}
 
 // NewGame handles the /newGame route
 func NewGame(c *gin.Context) {
-	var g Game
-	if c.ShouldBindJSON(&g) != nil {
-		c.JSON(200, gin.H{
-			"error": "invalid input format",
+	g := &common.Game{}
+	if c.ShouldBindJSON(g) != nil {
+		c.JSON(400, gin.H{
+			"error": "invalid data",
 		})
 	}
 
-	// write game to db
+	g.Reporter = c.MustGet("user").(*common.User).ID
+	g.Time = time.Now()
+
+	// Do input validation
+	//FIXME
+
+	// Write game to database
+	db.InsertGame(g)
 }

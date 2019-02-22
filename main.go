@@ -1,15 +1,35 @@
 package main
 
 import (
-	"github.com/2brokeboys/sheepy-server/routes"
 	"github.com/2brokeboys/sheepy-server/db"
+	"github.com/2brokeboys/sheepy-server/middleware"
+	"github.com/2brokeboys/sheepy-server/routes"
 
 	"log"
 
-	"github.com/gin-gonic/gin"
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-contrib/sessions/memstore"
+	"github.com/gin-gonic/gin"
 )
+
+func setupRouter() *gin.Engine {
+	r := gin.Default()
+	store := memstore.NewStore([]byte("secret"))
+	r.Use(sessions.Sessions("_", store))
+
+	// HTTP root serves html page
+	r.GET("/", routes.Root)
+
+	// Login route
+	r.POST("/login", routes.Login)
+
+	// Routes requiring login
+	g := r.Group("/", middleware.GetUser)
+	/**/ g.POST("/newGame", routes.NewGame)
+	/**/ g.POST("/queryUser", routes.QueryUser)
+
+	return r
+}
 
 func main() {
 	err := db.InitDB()
@@ -17,13 +37,6 @@ func main() {
 		log.Fatal(err)
 	}
 
-	r := gin.Default()
-	store := memstore.NewStore([]byte("secret"))
-	r.Use(sessions.Sessions("_", store))
-
-	r.GET("/", routes.Root)
-	r.GET("/newGame", routes.NewGame)
-	r.GET("/queryUser", routes.QueryUser)
-	r.GET("/login", routes.Login)
+	r := setupRouter()
 	r.Run()
 }

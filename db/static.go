@@ -14,13 +14,17 @@ var db *sqlx.DB
 func InitDB() error {
 	var err error
 	//db = sqlx.Connect("mysql", "root:root@localhost/db")
-	db, err = sqlx.Connect("sqlite3", "/tmp/sheepy.sqlite3")
+	db, err = sqlx.Connect("sqlite3", ":memory:")
 	if err != nil {
 		return errors.Wrap(err, "Error connecting to database")
 	}
+	err = migrate()
+	if err != nil {
+		return errors.Wrap(err, "Error migrating schema")
+	}
 	err = initStatements()
 	if err != nil {
-		return err
+		return errors.Wrap(err, "Error initing Statements")
 	}
-	return migrate()
+	return nil
 }
