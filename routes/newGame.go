@@ -1,6 +1,7 @@
 package routes
 
 import (
+	"log"
 	"time"
 
 	"github.com/2brokeboys/sheepy-server/common"
@@ -11,10 +12,13 @@ import (
 // NewGame handles the /newGame route
 func NewGame(c *gin.Context) {
 	g := &common.Game{}
-	if c.ShouldBindJSON(g) != nil {
+	err := c.ShouldBindJSON(g)
+	if err != nil {
+		log.Println(err)
 		c.JSON(400, gin.H{
 			"error": "invalid data",
 		})
+		return
 	}
 
 	g.Reporter = c.MustGet("user").(*common.User).ID
@@ -25,4 +29,8 @@ func NewGame(c *gin.Context) {
 
 	// Write game to database
 	db.InsertGame(g)
+
+	c.JSON(200, gin.H{
+		"success": true,
+	})
 }

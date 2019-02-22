@@ -32,7 +32,7 @@ type Game struct {
 	Schwarz  bool     `json:"schwarz" binding:"required"`
 
 	// Meta information
-	Time     time.Time `json:"time"`
+	Time     time.Time
 	Reporter int
 }
 

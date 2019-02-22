@@ -12,6 +12,7 @@ var (
 	getExactUserStatement *sqlx.Stmt
 	insertGameStatement   *sqlx.NamedStmt
 	queryUserStatement    *sqlx.Stmt
+	insertUserStatement   *sqlx.NamedStmt
 )
 
 func initStatements() error {
@@ -22,13 +23,18 @@ func initStatements() error {
 		return errors.Wrap(err, "Error preparing getExactUserStatement")
 	}
 
-	insertGameStatement, err = db.PrepareNamed(`INSERT INTO games (part0, part1, part2, part3, player, playmate, gametype, points,	schwarz, time, reporter)
+	insertGameStatement, err = db.PrepareNamed(`INSERT INTO games (part0, part1, part2, part3, player, playmate, gametype, points, schwarz, time, reporter)
 	VALUES (:part0, :part1, :part2, :part3, :player, :playmate, :gametype, :points, :schwarz, :time, :reporter)`)
 	if err != nil {
 		return errors.Wrap(err, "Error preparing insertGameStatement")
 	}
 
 	queryUserStatement, err = db.Preparex("SELECT * FROM users WHERE username LIKE ? OR name LIKE ?")
+	if err != nil {
+		return err
+	}
+
+	insertUserStatement, err = db.PrepareNamed("INSERT INTO users (username, name, pw) VALUES (:username, :name, :pw)")
 	if err != nil {
 		return err
 	}

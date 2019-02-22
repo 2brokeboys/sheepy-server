@@ -1,8 +1,6 @@
 package routes
 
 import (
-	"log"
-
 	"github.com/2brokeboys/sheepy-server/common"
 	"github.com/2brokeboys/sheepy-server/db"
 	"github.com/gin-contrib/sessions"
@@ -25,12 +23,11 @@ func Login(c *gin.Context) {
 
 	// Get inputs
 	var l struct {
-		User     string `json:"user" binding:"required"`
+		Username string `json:"username" binding:"required"`
 		Password string `json:"password" binding:"required"`
 	}
 	err := c.ShouldBindJSON(&l)
 	if err != nil {
-		log.Println(err)
 		c.JSON(400, gin.H{
 			"error": "invalid data",
 		})
@@ -38,7 +35,7 @@ func Login(c *gin.Context) {
 	}
 
 	// Validate credentials
-	user, ok := db.AuthentificateUser(l.User, l.Password)
+	user, ok := db.AuthentificateUser(l.Username, l.Password)
 	if !ok {
 		c.JSON(401, gin.H{
 			"error": "invalid credentials",
