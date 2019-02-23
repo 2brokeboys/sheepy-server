@@ -17,6 +17,9 @@ func setupRouter() *gin.Engine {
 	store := memstore.NewStore([]byte("secret"))
 	r.Use(sessions.Sessions("_", store))
 
+	r.Static("/assets", "../sheepy-client/dist/webpack/website/assets")
+	r.StaticFile("/main.js", "../sheepy-client/dist/webpack/website/main.js")
+
 	// HTTP root serves html page
 	r.GET("/", routes.Root)
 
