@@ -30,6 +30,8 @@ type Game struct {
 	GameType GameType `json:"game_type" binding:"required"`
 	Points   int      `json:"points" binding:"required"`
 	Schwarz  bool     `json:"schwarz" binding:"required"`
+	Runners  int      `json:"runners" binding:"required"`
+	Virgins  int      `json:"virgins"`
 
 	// Meta information
 	Time     time.Time

@@ -1,7 +1,6 @@
 package routes
 
 import (
-	"log"
 	"time"
 
 	"github.com/2brokeboys/sheepy-server/common"
@@ -14,7 +13,6 @@ func NewGame(c *gin.Context) {
 	g := &common.Game{}
 	err := c.ShouldBindJSON(g)
 	if err != nil {
-		log.Println(err)
 		c.JSON(400, gin.H{
 			"error": "invalid data",
 		})
@@ -25,7 +23,13 @@ func NewGame(c *gin.Context) {
 	g.Time = time.Now()
 
 	// Do input validation
-	//FIXME
+	msgs := g.Sanitize()
+	if len(msgs) > 0 {
+		c.JSON(400, gin.H{
+			"error":    "invalid game",
+			"messages": msgs,
+		})
+	}
 
 	// Write game to database
 	db.InsertGame(g)
