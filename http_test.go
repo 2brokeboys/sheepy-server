@@ -80,8 +80,20 @@ func TestSession(t *testing.T) {
 		GameType:     common.SoloEichel,
 		Points:       120,
 		Schwarz:      true,
+		Runners:      5,
+		Virgins:      0,
 	}
 	b, err := json.Marshal(g)
 	assert.Nil(t, err)
-	pt("/newGame", string(b)+"\n", 200, `{"success":true}`)
+	pt("/newGame", string(b), 200, `{"success":true}`)
+
+	// Query users - ok
+	pt("/queryUser", `{"search":"oo"}`, 200, `{"success":true,
+	"users":[{"id":1, "username":"foo", "name":""},{"id":3, "username":"moo", "name":""}]}`)
+
+	// Query users - fail
+	pt("/queryUser", "", 400, `{"error":"invalid data"}`)
+
+	// Query users - empty
+	pt("/queryUser", `{"search":"sfsefasdf"}`, 200, `{"success":true,"users":[]}`)
 }

@@ -29,7 +29,7 @@ func initStatements() error {
 		return errors.Wrap(err, "Error preparing insertGameStatement")
 	}
 
-	queryUserStatement, err = db.Preparex("SELECT * FROM users WHERE username LIKE ? OR name LIKE ?")
+	queryUserStatement, err = db.Preparex("SELECT * FROM users WHERE username LIKE ? OR name LIKE ? LIMIT 20")
 	if err != nil {
 		return err
 	}
