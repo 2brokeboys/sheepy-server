@@ -9,7 +9,7 @@ import (
 
 const schema = `CREATE TABLE IF NOT EXISTS users (
 	id INTEGER PRIMARY KEY AUTOINCREMENT,
-	username varchar[16],
+	username varchar[16] UNIQUE,
 	name varchar[100],
 	pw varchar[60]
 );

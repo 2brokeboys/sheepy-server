@@ -20,6 +20,10 @@ func TestStatements(t *testing.T) {
 	assert.Zero(t, len(us))
 
 	AddTestUsers(t)
+	assert.NotNil(t, InsertUser(&common.User{
+		Username: "foo",
+		Name:     "Peter Foo",
+	}, "abc"))
 
 	// Check test user login
 	_, ok = AuthentificateUser("foo", "123456")
