@@ -9,10 +9,11 @@ import (
 )
 
 var (
-	getExactUserStatement *sqlx.Stmt
-	insertGameStatement   *sqlx.NamedStmt
-	queryUserStatement    *sqlx.Stmt
-	insertUserStatement   *sqlx.NamedStmt
+	getExactUserStatement     *sqlx.Stmt
+	insertGameStatement       *sqlx.NamedStmt
+	queryUserStatement        *sqlx.Stmt
+	insertUserStatement       *sqlx.NamedStmt
+	queryRecentGamesStatement *sqlx.Stmt
 )
 
 func initStatements() error {
@@ -23,8 +24,8 @@ func initStatements() error {
 		return errors.Wrap(err, "Error preparing getExactUserStatement")
 	}
 
-	insertGameStatement, err = db.PrepareNamed(`INSERT INTO games (part0, part1, part2, part3, player, playmate, gametype, points, schwarz, time, reporter)
-	VALUES (:part0, :part1, :part2, :part3, :player, :playmate, :gametype, :points, :schwarz, :time, :reporter)`)
+	insertGameStatement, err = db.PrepareNamed(`INSERT INTO games (part0, part1, part2, part3, player, playmate, gametype, points, schwarz, runners, virgins, time, reporter)
+	VALUES (:part0, :part1, :part2, :part3, :player, :playmate, :gametype, :points, :schwarz, :runners, :virgins, :time, :reporter)`)
 	if err != nil {
 		return errors.Wrap(err, "Error preparing insertGameStatement")
 	}
@@ -35,6 +36,11 @@ func initStatements() error {
 	}
 
 	insertUserStatement, err = db.PrepareNamed("INSERT INTO users (username, name, pw) VALUES (:username, :name, :pw)")
+	if err != nil {
+		return err
+	}
+
+	queryRecentGamesStatement, err = db.Preparex("SELECT * FROM games LIMIT ?, ?")
 	if err != nil {
 		return err
 	}
@@ -56,6 +62,8 @@ func InsertGame(game *common.Game) error {
 		Gametype: int8(game.GameType),
 		Points:   int8(game.Points),
 		Schwarz:  game.Schwarz,
+		Virgins:  int8(game.Virgins),
+		Runners:  int8(game.Runners),
 
 		Time:     game.Time,
 		Reporter: game.Reporter,
@@ -85,6 +93,20 @@ func QueryUser(search string) ([]*common.User, error) {
 	ret := make([]*common.User, len(dbUsers))
 	for i := range ret {
 		ret[i] = dbUsers[i].ToCommon()
+	}
+	return ret, nil
+}
+
+// QueryRecentGames return the numer recent games
+func QueryRecentGames(from, number int) ([]*common.Game, error) {
+	dbGames := make([]dbGame, 0)
+	err := queryRecentGamesStatement.Select(&dbGames, from, number)
+	if err != nil {
+		return nil, errors.Wrap(err, "Error querying games")
+	}
+	ret := make([]*common.Game, len(dbGames))
+	for i := range ret {
+		ret[i] = dbGames[i].ToCommon()
 	}
 	return ret, nil
 }
