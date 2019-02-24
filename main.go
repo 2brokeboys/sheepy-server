@@ -7,6 +7,7 @@ import (
 
 	"log"
 
+	"github.com/gin-contrib/gzip"
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-contrib/sessions/memstore"
 	"github.com/gin-gonic/gin"
@@ -14,14 +15,21 @@ import (
 
 func setupRouter() *gin.Engine {
 	r := gin.Default()
+
+	// Setup sessions
 	store := memstore.NewStore([]byte("secret"))
 	r.Use(sessions.Sessions("_", store))
 
+	// Setup Gzip compression
+	r.Use(gzip.Gzip(gzip.DefaultCompression))
+
+	// Serve static files
 	r.Static("/assets", "../sheepy-client/dist/webpack/website/assets")
 	r.StaticFile("/main.js", "../sheepy-client/dist/webpack/website/main.js")
 
 	// HTTP root serves html page
 	r.GET("/", routes.Root)
+	r.HEAD("/", routes.Root)
 
 	// Login route
 	r.POST("/login", routes.Login)
