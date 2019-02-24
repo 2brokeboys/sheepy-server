@@ -20,8 +20,8 @@ CREATE TABLE IF NOT EXISTS games (
 	part2 int,
 	part3 int,
 
-	player int,
-	playmate int,
+	player tiny,
+	playmate tiny,
 
 	gametype tiny,
 	points tiny,
@@ -44,8 +44,8 @@ type dbGame struct {
 	Part2 int
 	Part3 int
 
-	Player   int
-	Playmate int
+	Player   int8
+	Playmate int8
 
 	Gametype int8
 	Points   int8

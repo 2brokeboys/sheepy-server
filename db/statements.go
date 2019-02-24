@@ -50,8 +50,8 @@ func InsertGame(game *common.Game) error {
 		Part2: game.Participants[2],
 		Part3: game.Participants[3],
 
-		Player:   game.Player,
-		Playmate: game.Playmate,
+		Player:   int8(game.Player),
+		Playmate: int8(game.Playmate),
 
 		Gametype: int8(game.GameType),
 		Points:   int8(game.Points),
