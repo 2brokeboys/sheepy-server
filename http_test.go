@@ -88,6 +88,10 @@ func TestSession(t *testing.T) {
 	assert.Nil(t, err)
 	pt("/newGame", string(b), 200, `{"success":true}`)
 
+	pt("/queryRecentGames", `{}`, 400, `{"error":"invalid data"}`)
+	pt("/queryRecentGames", `{"from":-1,"number":50}`, 404, `{"error":"index out of range"}`)
+	pt("/queryRecentGames", `{"from":1,"number":51}`, 404, `{"error":"number has to be within 0 to 50"}`)
+
 	b, err = json.Marshal(gin.H{"success": true, "games": []*common.Game{g}})
 	assert.Nil(t, err)
 	pt("/queryRecentGames", `{"from":0,"number":50}`, 200, string(b))
