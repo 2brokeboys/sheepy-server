@@ -2,6 +2,7 @@ package db
 
 import (
 	"strings"
+	"sync"
 
 	"github.com/2brokeboys/sheepy-server/common"
 	"github.com/jmoiron/sqlx"
@@ -77,8 +78,13 @@ func InsertGame(game *common.Game) error {
 	return nil
 }
 
+// Apparently there is some bug which hinders concurrency
+var mu sync.Mutex
+
 // QueryUser returns all users matching the given search string
 func QueryUser(search string) ([]*common.User, error) {
+	mu.Lock()
+	defer mu.Unlock()
 	dbUsers := make([]dbUser, 0)
 
 	// simulate half-fuzzy search
