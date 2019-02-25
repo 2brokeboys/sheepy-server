@@ -26,6 +26,8 @@ CREATE TABLE IF NOT EXISTS games (
 	gametype tiny,
 	points tiny,
 	schwarz bit,
+	runners tiny,
+	virgins tiny,
 
 	time datetime,
 	reporter int
@@ -50,6 +52,8 @@ type dbGame struct {
 	Gametype int8
 	Points   int8
 	Schwarz  bool
+	Runners  int8
+	Virgins  int8
 
 	Time     time.Time
 	Reporter int
@@ -65,5 +69,22 @@ func (user *dbUser) ToCommon() *common.User {
 		ID:       user.ID,
 		Name:     user.Name,
 		Username: user.Username,
+	}
+}
+
+func (g *dbGame) ToCommon() *common.Game {
+	return &common.Game{
+		Participants: [4]int{g.Part0, g.Part1, g.Part2, g.Part3},
+		Player:       g.Player,
+		Playmate:     g.Playmate,
+
+		GameType: common.GameType(g.Gametype),
+		Points:   int(g.Points),
+		Schwarz:  g.Schwarz,
+		Runners:  int(g.Runners),
+		Virgins:  int(g.Virgins),
+
+		Time:     g.Time,
+		Reporter: g.Reporter,
 	}
 }

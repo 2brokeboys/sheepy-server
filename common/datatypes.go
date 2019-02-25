@@ -34,8 +34,8 @@ type Game struct {
 	Virgins  int      `json:"virgins"`
 
 	// Meta information
-	Time     time.Time
-	Reporter int
+	Time     time.Time `json:"-"`
+	Reporter int       `json:"-"`
 }
 
 // User represents a user of the website

@@ -11,6 +11,7 @@ import (
 
 	"github.com/2brokeboys/sheepy-server/common"
 	"github.com/2brokeboys/sheepy-server/db"
+	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -37,7 +38,7 @@ func TestLogin(t *testing.T) {
 	postTest(t, "/login", "", 400, `{"error":"invalid data"}`)
 	postTest(t, "/login", `{"username":"a","password":"a"}`, 401, `{"error":"invalid credentials"}`)
 	postTest(t, "/login", `{"username":"foo","password":"12456"}`, 401, `{"error":"invalid credentials"}`)
-	postTest(t, "/login", `{"username":"foo","password":"123456"}`, 200, `{"success":true}`)
+	postTest(t, "/login", `{"username":"foo","password":"123456"}`, 200, `{"success":true, "user":{"id":1, "username":"foo", "name":""}}`)
 }
 
 func TestSession(t *testing.T) {
@@ -64,7 +65,7 @@ func TestSession(t *testing.T) {
 	}
 
 	// Login with valid credentials
-	pt("/login", `{"username":"foo","password":"123456"}`, 200, `{"success":true}`)
+	pt("/login", `{"username":"foo","password":"123456"}`, 200, `{"success":true, "user":{"id":1, "username":"foo", "name":""}}`)
 
 	// Second login should fail
 	pt("/login", `{"username":"foo","password":"123456"}`, 409, `{"error":"already logged in"}`)
@@ -86,6 +87,14 @@ func TestSession(t *testing.T) {
 	b, err := json.Marshal(g)
 	assert.Nil(t, err)
 	pt("/newGame", string(b), 200, `{"success":true}`)
+
+	pt("/queryRecentGames", `{}`, 400, `{"error":"invalid data"}`)
+	pt("/queryRecentGames", `{"from":-1,"number":50}`, 404, `{"error":"index out of range"}`)
+	pt("/queryRecentGames", `{"from":1,"number":51}`, 404, `{"error":"number has to be within 0 to 50"}`)
+
+	b, err = json.Marshal(gin.H{"success": true, "games": []*common.Game{g}})
+	assert.Nil(t, err)
+	pt("/queryRecentGames", `{"from":0,"number":50}`, 200, string(b))
 
 	// Query users - ok
 	pt("/queryUser", `{"search":"oo"}`, 200, `{"success":true,
