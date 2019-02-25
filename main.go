@@ -31,6 +31,10 @@ func setupRouter() *gin.Engine {
 	r.GET("/", routes.Root)
 	r.HEAD("/", routes.Root)
 
+	// Redirect all angular routes to index page
+	r.GET("/create-game", routes.RedirectRoot)
+	r.GET("/submit-game", routes.RedirectRoot)
+
 	// Login route
 	r.POST("/login", routes.Login)
 
