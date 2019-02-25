@@ -75,8 +75,8 @@ func (user *dbUser) ToCommon() *common.User {
 func (g *dbGame) ToCommon() *common.Game {
 	return &common.Game{
 		Participants: [4]int{g.Part0, g.Part1, g.Part2, g.Part3},
-		Player:       g.Player,
-		Playmate:     g.Playmate,
+		Player:       int(g.Player),
+		Playmate:     int(g.Playmate),
 
 		GameType: common.GameType(g.Gametype),
 		Points:   int(g.Points),
