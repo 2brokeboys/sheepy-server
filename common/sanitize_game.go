@@ -5,27 +5,19 @@ func (g *Game) Sanitize() []string {
 	ret := make([]string, 0)
 
 	// Check player constellation
-	if g.Player < 0 {
-		ret = append(ret, "No player given.")
-	}
 	if g.Playmate == g.Player {
 		ret = append(ret, "Player and playmate must not match.")
 	}
-	playmatePart := false
-	playerPart := false
 	for _, n := range g.Participants {
-		if n == g.Player {
-			playerPart = true
-		}
-		if n == g.Playmate {
-			playmatePart = true
+		if n < 0 {
+			ret = append(ret, "Participant out of range.")
 		}
 	}
-	if !playerPart {
-		ret = append(ret, "The player has to participate in the game.")
+	if g.Player < 0 || g.Player > 4 {
+		ret = append(ret, "Player out of range.")
 	}
-	if g.Playmate >= 0 && !playmatePart {
-		ret = append(ret, "The playmate has to participate in the game.")
+	if g.Playmate > 4 || g.Playmate < -1 {
+		ret = append(ret, "Playmate out of range.")
 	}
 
 	// Check point annomaly
