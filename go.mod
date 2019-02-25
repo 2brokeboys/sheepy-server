@@ -1,6 +1,7 @@
 module github.com/2brokeboys/sheepy-server
 
 require (
+	github.com/gin-contrib/gzip v0.0.0-20190101123152-0eb78e93402e
 	github.com/gin-contrib/sessions v0.0.0-20190212110342-a38112fffc50
 	github.com/gin-contrib/sse v0.0.0-20190125020943-a7658810eb74 // indirect
 	github.com/gin-gonic/gin v1.3.0
