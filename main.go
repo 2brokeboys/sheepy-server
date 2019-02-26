@@ -23,6 +23,9 @@ func setupRouter() *gin.Engine {
 	// Setup Gzip compression
 	r.Use(gzip.Gzip(gzip.DefaultCompression))
 
+	// Until proper cache-invalidation is implemented, disable cache
+	r.Use(middleware.NoCache)
+
 	// Serve static files
 	r.Static("/assets", "../sheepy-client/dist/webpack/website/assets")
 	r.StaticFile("/main.js", "../sheepy-client/dist/webpack/website/main.js")
