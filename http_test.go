@@ -97,7 +97,7 @@ func TestSession(t *testing.T) {
 	pt("/queryRecentGames", `{"from":0,"number":50}`, 200, string(b))
 
 	// Query users - ok
-	pt("/queryUser", `{"search":"oo"}`, 200, `{"success":true,
+	pt("/queryUser", `{"search":"OO"}`, 200, `{"success":true,
 	"users":[{"id":1, "username":"foo", "name":""},{"id":3, "username":"moo", "name":""}]}`)
 
 	// Query users - fail
