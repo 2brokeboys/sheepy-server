@@ -1,6 +1,8 @@
 package main
 
 import (
+	"strconv"
+	"github.com/2brokeboys/sheepy-server/common"
 	"github.com/2brokeboys/sheepy-server/db"
 	"github.com/2brokeboys/sheepy-server/middleware"
 	"github.com/2brokeboys/sheepy-server/routes"
@@ -54,6 +56,17 @@ func main() {
 	err := db.InitDB()
 	if err != nil {
 		log.Fatal(err)
+	}
+
+	if gin.Mode() == gin.DebugMode {
+		log.Println("Creating 89 test users...")
+		for i := 10; i < 100; i++ {
+			db.InsertUser(&common.User{
+				Name: "Hans Jürgen " + strconv.Itoa(i),
+				Username: "x" + strconv.Itoa(i),
+			}, "123456")
+		}
+		log.Println("Test users created.")
 	}
 
 	r := setupRouter()
