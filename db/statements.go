@@ -31,7 +31,7 @@ func initStatements() error {
 		return errors.Wrap(err, "Error preparing insertGameStatement")
 	}
 
-	queryUserStatement, err = db.Preparex("SELECT * FROM users WHERE username LIKE ? OR name LIKE ? LIMIT 20")
+	queryUserStatement, err = db.Preparex("SELECT * FROM users WHERE LOWER(username) LIKE ? OR LOWER(name) LIKE ? LIMIT 20")
 	if err != nil {
 		return err
 	}
@@ -88,6 +88,7 @@ func QueryUser(search string) ([]*common.User, error) {
 	dbUsers := make([]dbUser, 0)
 
 	// simulate half-fuzzy search
+	search = strings.ToLower(search)
 	search = strings.Replace(search, " ", "%", -1)
 	search = "%" + search + "%"
 
