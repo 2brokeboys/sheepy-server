@@ -15,20 +15,20 @@ func QueryRecentGames(c *gin.Context) {
 	}
 	err := c.ShouldBindJSON(&p)
 	if err != nil {
-		c.JSON(400, gin.H{
+		c.JSON(200, gin.H{
 			"error": "invalid data",
 		})
 		return
 	}
 
 	if p.From < 0 {
-		c.JSON(404, gin.H{
+		c.JSON(200, gin.H{
 			"error": "index out of range",
 		})
 		return
 	}
 	if p.Number < 0 || p.Number > 50 {
-		c.JSON(404, gin.H{
+		c.JSON(200, gin.H{
 			"error": "number has to be within 0 to 50",
 		})
 		return
@@ -37,7 +37,7 @@ func QueryRecentGames(c *gin.Context) {
 	games, err := db.QueryRecentGames(p.From, p.Number)
 	if err != nil {
 		log.Println(err)
-		c.JSON(500, gin.H{
+		c.JSON(200, gin.H{
 			"error": "database error",
 		})
 		return

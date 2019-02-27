@@ -13,7 +13,7 @@ func NewGame(c *gin.Context) {
 	g := &common.Game{}
 	err := c.ShouldBindJSON(g)
 	if err != nil {
-		c.JSON(400, gin.H{
+		c.JSON(200, gin.H{
 			"error": "invalid data",
 		})
 		return
@@ -25,10 +25,11 @@ func NewGame(c *gin.Context) {
 	// Do input validation
 	msgs := g.Sanitize()
 	if len(msgs) > 0 {
-		c.JSON(400, gin.H{
+		c.JSON(200, gin.H{
 			"error":    "invalid game",
 			"messages": msgs,
 		})
+		return
 	}
 
 	// Write game to database
