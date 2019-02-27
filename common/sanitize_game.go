@@ -77,6 +77,9 @@ func (g *Game) Sanitize() []string {
 		if g.Points < 120/(4-g.Virgins) {
 			ret = append(ret, "Something is wrong with the combination of points and virgins.")
 		}
+		if g.Virgins == 3 && !g.Schwarz {
+			ret = append(ret, "3 virgins but not Schwarz is impossible.")
+		}
 	}
 
 	return ret
