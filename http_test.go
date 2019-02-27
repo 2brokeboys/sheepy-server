@@ -35,9 +35,9 @@ func TestNoLogin(t *testing.T) {
 func TestLogin(t *testing.T) {
 	db.InitDB()
 	db.AddTestUsers(t)
-	postTest(t, "/login", "", 400, `{"error":"invalid data"}`)
-	postTest(t, "/login", `{"username":"a","password":"a"}`, 401, `{"error":"invalid credentials"}`)
-	postTest(t, "/login", `{"username":"foo","password":"12456"}`, 401, `{"error":"invalid credentials"}`)
+	postTest(t, "/login", "", 200, `{"error":"invalid data"}`)
+	postTest(t, "/login", `{"username":"a","password":"a"}`, 200, `{"error":"invalid credentials"}`)
+	postTest(t, "/login", `{"username":"foo","password":"12456"}`, 200, `{"error":"invalid credentials"}`)
 	postTest(t, "/login", `{"username":"foo","password":"123456"}`, 200, `{"success":true, "user":{"id":1, "username":"foo", "name":""}}`)
 }
 
@@ -68,10 +68,10 @@ func TestSession(t *testing.T) {
 	pt("/login", `{"username":"foo","password":"123456"}`, 200, `{"success":true, "user":{"id":1, "username":"foo", "name":""}}`)
 
 	// Second login should fail
-	pt("/login", `{"username":"foo","password":"123456"}`, 409, `{"error":"already logged in"}`)
+	pt("/login", `{"username":"foo","password":"123456"}`, 200, `{"error":"already logged in"}`)
 
 	// Create new game with invalid data
-	pt("/newGame", "", 400, `{"error":"invalid data"}`)
+	pt("/newGame", "", 200, `{"error":"invalid data"}`)
 
 	// Create new game
 	g := &common.Game{
@@ -88,9 +88,9 @@ func TestSession(t *testing.T) {
 	assert.Nil(t, err)
 	pt("/newGame", string(b), 200, `{"success":true}`)
 
-	pt("/queryRecentGames", `{}`, 400, `{"error":"invalid data"}`)
-	pt("/queryRecentGames", `{"from":-1,"number":50}`, 404, `{"error":"index out of range"}`)
-	pt("/queryRecentGames", `{"from":1,"number":51}`, 404, `{"error":"number has to be within 0 to 50"}`)
+	pt("/queryRecentGames", `{}`, 200, `{"error":"invalid data"}`)
+	pt("/queryRecentGames", `{"from":-1,"number":50}`, 200, `{"error":"index out of range"}`)
+	pt("/queryRecentGames", `{"from":1,"number":51}`, 200, `{"error":"number has to be within 0 to 50"}`)
 
 	b, err = json.Marshal(gin.H{"success": true, "games": []*common.Game{g}})
 	assert.Nil(t, err)
@@ -101,13 +101,13 @@ func TestSession(t *testing.T) {
 	"users":[{"id":1, "username":"foo", "name":""},{"id":3, "username":"moo", "name":""}]}`)
 
 	// Query users - fail
-	pt("/queryUser", "", 400, `{"error":"invalid data"}`)
+	pt("/queryUser", "", 200, `{"error":"invalid data"}`)
 
 	// Query users - empty
 	pt("/queryUser", `{"search":"sfsefasdf"}`, 200, `{"success":true,"users":[]}`)
 
 	// Get User
-	pt("/getUser", "", 400, `{"error":"invalid data"}`)
+	pt("/getUser", "", 200, `{"error":"invalid data"}`)
 	pt("/getUser", `{"username":"foo"}`, 200, `{"success":true,"user":{"id":1, "username":"foo", "name":""}}`)
 	pt("/getUser", `{"username":"asdfdfs"}`, 200, `{"success":true}`)
 }
