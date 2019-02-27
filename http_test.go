@@ -105,4 +105,9 @@ func TestSession(t *testing.T) {
 
 	// Query users - empty
 	pt("/queryUser", `{"search":"sfsefasdf"}`, 200, `{"success":true,"users":[]}`)
+
+	// Get User
+	pt("/getUser", "", 400, `{"error":"invalid data"}`)
+	pt("/getUser", `{"username":"foo"}`, 200, `{"success":true,"user":{"id":1, "username":"foo", "name":""}}`)
+	pt("/getUser", `{"username":"asdfdfs"}`, 200, `{"success":true}`)
 }

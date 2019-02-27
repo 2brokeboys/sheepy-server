@@ -13,6 +13,7 @@ var (
 	getExactUserStatement     *sqlx.Stmt
 	insertGameStatement       *sqlx.NamedStmt
 	queryUserStatement        *sqlx.Stmt
+	getUserStatement          *sqlx.Stmt
 	insertUserStatement       *sqlx.NamedStmt
 	queryRecentGamesStatement *sqlx.Stmt
 )
@@ -102,6 +103,22 @@ func QueryUser(search string) ([]*common.User, error) {
 		ret[i] = dbUsers[i].ToCommon()
 	}
 	return ret, nil
+}
+
+// GetUser returns all users matching the given search string
+// Returns nil when the user was not found (no error)
+func GetUser(username string) (*common.User, error) {
+	dbUser := dbUser{}
+	err := getExactUserStatement.Get(&dbUser, username)
+	if err != nil {
+		if err.Error() == "sql: no rows in result set" {
+			// If no user was found, this is not an error
+			return nil, nil
+		}
+		return nil, errors.Wrap(err, "Error querying users")
+	}
+
+	return dbUser.ToCommon(), nil
 }
 
 // QueryRecentGames return the numer recent games
