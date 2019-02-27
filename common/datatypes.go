@@ -22,15 +22,15 @@ const (
 // Game represents one game played
 type Game struct {
 	// Player information
-	Participants [4]int `json:"participants" binding:"required"`
-	Player       int    `json:"player" binding:"required"`
-	Playmate     int    `json:"playmate" binding:"required"`
+	Participants [4]int `json:"participants"`
+	Player       int    `json:"player"`
+	Playmate     int    `json:"playmate"`
 
 	// Game information
-	GameType GameType `json:"game_type" binding:"required"`
-	Points   int      `json:"points" binding:"required"`
-	Schwarz  bool     `json:"schwarz" binding:"required"`
-	Runners  int      `json:"runners" binding:"required"`
+	GameType GameType `json:"gameType"`
+	Points   int      `json:"points"`
+	Schwarz  bool     `json:"schwarz"`
+	Runners  int      `json:"runners"`
 	Virgins  int      `json:"virgins"`
 
 	// Meta information
