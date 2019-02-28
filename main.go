@@ -25,12 +25,11 @@ func setupRouter() *gin.Engine {
 	// Setup Gzip compression
 	r.Use(gzip.Gzip(gzip.DefaultCompression))
 
-	// Until proper cache-invalidation is implemented, disable cache
-	r.Use(middleware.NoCache)
-
-	// Serve static files
-	r.Static("/assets", "../sheepy-client/dist/webpack/website/assets")
-	r.StaticFile("/main.js", "../sheepy-client/dist/webpack/website/main.js")
+	// Serve static files (with agressive caching)
+	g := r.Group("/", middleware.CacheControl)
+	/**/ g.Static("/assets", "../sheepy-client/dist/webpack/website/assets")
+	/**/ g.StaticFile("/main.js", "../sheepy-client/dist/webpack/website/main.js")
+	/**/ g.StaticFile("/dependencies.js", "../sheepy-client/dist/webpack/website/dependencies.js")
 
 	// HTTP root serves html page
 	r.GET("/", routes.Root)
@@ -44,7 +43,7 @@ func setupRouter() *gin.Engine {
 	r.POST("/login", routes.Login)
 
 	// Routes requiring login
-	g := r.Group("/", middleware.GetUser)
+	g = r.Group("/", middleware.GetUser)
 	/**/ g.POST("/newGame", routes.NewGame)
 	/**/ g.POST("/queryUser", routes.QueryUser)
 	/**/ g.POST("/getUser", routes.GetUser)
