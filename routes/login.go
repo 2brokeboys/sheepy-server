@@ -15,7 +15,7 @@ func Login(c *gin.Context) {
 	v := session.Get("user")
 	_, ok := v.(*common.User)
 	if ok {
-		c.JSON(409, gin.H{
+		c.JSON(200, gin.H{
 			"error": "already logged in",
 		})
 		return
@@ -28,7 +28,7 @@ func Login(c *gin.Context) {
 	}
 	err := c.ShouldBindJSON(&l)
 	if err != nil {
-		c.JSON(400, gin.H{
+		c.JSON(200, gin.H{
 			"error": "invalid data",
 		})
 		return
@@ -37,7 +37,7 @@ func Login(c *gin.Context) {
 	// Validate credentials
 	user, ok := db.AuthentificateUser(l.Username, l.Password)
 	if !ok {
-		c.JSON(401, gin.H{
+		c.JSON(200, gin.H{
 			"error": "invalid credentials",
 		})
 		return

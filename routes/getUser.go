@@ -12,7 +12,7 @@ func GetUser(c *gin.Context) {
 	}
 	err := c.ShouldBindJSON(&p)
 	if err != nil {
-		c.JSON(400, gin.H{
+		c.JSON(200, gin.H{
 			"error": "invalid data",
 		})
 		return
@@ -20,7 +20,7 @@ func GetUser(c *gin.Context) {
 
 	user, err := db.GetUser(p.Username)
 	if err != nil {
-		c.JSON(500, gin.H{
+		c.JSON(200, gin.H{
 			"error": "error querying database",
 		})
 		return
@@ -33,6 +33,6 @@ func GetUser(c *gin.Context) {
 	}
 	c.JSON(200, gin.H{
 		"success": true,
-		"user":   user,
+		"user":    user,
 	})
 }
