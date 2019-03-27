@@ -45,9 +45,10 @@ func setupRouter() *gin.Engine {
 	// Routes requiring login
 	g = r.Group("/", middleware.GetUser)
 	/**/ g.POST("/newGame", routes.NewGame)
-	/**/ g.POST("/queryUser", routes.QueryUser)
+	/**/ g.POST("/logout", routes.Logout)
 	/**/ g.POST("/getUser", routes.GetUser)
 	/**/ g.POST("/queryRecentGames", routes.QueryRecentGames)
+	/**/ g.POST("/queryUser", routes.QueryUser)
 
 	return r
 }
