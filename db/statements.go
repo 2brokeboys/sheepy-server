@@ -1,6 +1,7 @@
 package db
 
 import (
+	"log"
 	"strings"
 	"sync"
 
@@ -52,14 +53,20 @@ func initStatements() error {
 
 // InsertGame inserts the given game into the db
 func InsertGame(game *common.Game) error {
+	log.Println("player", game.Player)
+	playmate := -1
+	if game.Playmate != -1 {
+		playmate = game.Participants[game.Playmate]
+	}
+	log.Println("playmate", game.Playmate)
 	dbgame := &dbGame{
 		Part0: game.Participants[0],
 		Part1: game.Participants[1],
 		Part2: game.Participants[2],
 		Part3: game.Participants[3],
 
-		Player:   int8(game.Player),
-		Playmate: int8(game.Playmate),
+		Player:   game.Participants[game.Player],
+		Playmate: playmate,
 
 		Gametype: int8(game.GameType),
 		Points:   int8(game.Points),

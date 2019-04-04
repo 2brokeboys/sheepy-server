@@ -23,6 +23,7 @@ const (
 type Game struct {
 	// Player information
 	Participants [4]int `json:"participants"`
+	// Player and Playmate as indices of the participants array (Values: 0-3)
 	Player       int    `json:"player"`
 	Playmate     int    `json:"playmate"`
 
