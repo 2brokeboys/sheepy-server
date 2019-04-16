@@ -20,8 +20,8 @@ CREATE TABLE IF NOT EXISTS games (
 	part2 int,
 	part3 int,
 
-	player tiny,
-	playmate tiny,
+	player int,
+	playmate int,
 
 	gametype tiny,
 	points tiny,
@@ -46,8 +46,8 @@ type dbGame struct {
 	Part2 int
 	Part3 int
 
-	Player   int8
-	Playmate int8
+	Player   int
+	Playmate int
 
 	Gametype int8
 	Points   int8
@@ -64,6 +64,21 @@ func migrate() error {
 	return errors.Wrap(err, "error migrating")
 }
 
+func (g *dbGame) indexInParticipants(uid int) int {
+	switch uid {
+	case g.Part0:
+		return 0
+	case g.Part1:
+		return 1
+	case g.Part2:
+		return 2
+	case g.Part3:
+		return 3
+	}
+	// this shouldn't happen
+	return -1
+}
+
 func (user *dbUser) ToCommon() *common.User {
 	return &common.User{
 		ID:       user.ID,
@@ -75,8 +90,8 @@ func (user *dbUser) ToCommon() *common.User {
 func (g *dbGame) ToCommon() *common.Game {
 	return &common.Game{
 		Participants: [4]int{g.Part0, g.Part1, g.Part2, g.Part3},
-		Player:       int(g.Player),
-		Playmate:     int(g.Playmate),
+		Player:       g.indexInParticipants(g.Player),
+		Playmate:     g.indexInParticipants(g.Playmate),
 
 		GameType: common.GameType(g.Gametype),
 		Points:   int(g.Points),
